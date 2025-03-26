@@ -8,15 +8,22 @@
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
-    <input type="text" id="japaneseInput" placeholder="ここに名前を入力">
-    <button onclick="sendToUnity()">送信</button>
+         <input type="text" id="japaneseInput" placeholder="ここに名前を入力">
+  <button onclick="sendToUnity()">送信</button>
 
-    <script>
-         function sendToUnity() {
-         const input = document.getElementById("japaneseInput").value;
-         unityInstance.SendMessage("GameManager", "ReceiveInput", input);
+  <script>
+    var unityInstance = null;
+
+    function sendToUnity() {
+      const input = document.getElementById("japaneseInput").value;
+      if (unityInstance) {
+        unityInstance.SendMessage("GameManager", "ReceiveInput", input);
+      } else {
+        console.warn("Unityの準備がまだ完了していません！");
+      }
     }
-    </script>
+  </script>
+
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
@@ -115,6 +122,8 @@
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
               }).then((unityInstance) => {
+
+              unityInstance = instance;
                 loadingBar.style.display = "none";
                 fullscreenButton.onclick = () => {
                   unityInstance.SetFullscreen(1);
