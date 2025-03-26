@@ -8,29 +8,39 @@
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
-         <input type="text" id="japaneseInput" placeholder="ここに名前を入力">
-  <button onclick="sendToUnity()">送信</button>
+  <!-- Unity画面のすぐ下に記述 -->
+<input id="japaneseInput" type="text"
+  style="position:absolute; left:-9999px; top:-9999px;" 
+  placeholder="ここに日本語を入力">
 
-  <script>
-    var unityInstance = null;
+<script>
+  const unityGameObject = "GameManager"; // Unity側のオブジェクト名
+  const unityReceiveMethod = "ReceiveInput";
+  const unityConfirmMethod = "ConfirmInput";
 
-    function sendToUnity() {
-      const input = document.getElementById("japaneseInput").value;
-      if (unityInstance) {
-        unityInstance.SendMessage("GameManager", "ReceiveInput", input);
-      } else {
-        console.warn("Unityの準備がまだ完了していません！");
+  const input = document.getElementById("japaneseInput");
+
+  // 入力途中でも文字を Unity に送る
+  input.addEventListener("input", () => {
+    const value = input.value;
+    if (window.unityInstance) {
+      unityInstance.SendMessage(unityGameObject, unityReceiveMethod, value);
+    }
+  });
+
+  // Enterキーで確定したら判定処理
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const value = input.value;
+      input.value = ""; // 入力欄を空にする
+      if (window.unityInstance) {
+        unityInstance.SendMessage(unityGameObject, unityConfirmMethod, value);
       }
     }
-  </script>
-
-  <script>
-  window.onload = () => {
-    document.getElementById("japaneseInput").focus();
-  };
+  });
 </script>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width="960" height="600"></canvas>
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -126,9 +136,7 @@
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
-              }).then((instance) => {
-
-              unityInstance = instance;
+              }).then((unityInstance) => {
                 loadingBar.style.display = "none";
                 fullscreenButton.onclick = () => {
                   unityInstance.SetFullscreen(1);
