@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
+    <input type="text" id="japaneseInput" placeholder="Ç±Ç±Ç…ñºëOÇì¸óÕ">
+    <button onclick="sendToUnity()">ëóêM</button>
+
+    <script>
+         function sendToUnity() {
+         const input = document.getElementById("japaneseInput").value;
+         unityInstance.SendMessage("GameManager", "ReceiveInput", input);
+    }
+    </script>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
@@ -57,11 +66,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/bulid2.loader.js";
+      var loaderUrl = buildUrl + "/Bulid.loader.js";
       var config = {
-        dataUrl: buildUrl + "/bulid2.data",
-        frameworkUrl: buildUrl + "/bulid2.framework.js",
-        codeUrl: buildUrl + "/bulid2.wasm",
+        dataUrl: buildUrl + "/Bulid.data",
+        frameworkUrl: buildUrl + "/Bulid.framework.js",
+        codeUrl: buildUrl + "/Bulid.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "testweb2d",
